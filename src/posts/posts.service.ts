@@ -6,6 +6,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { PaginationDto } from './dto/pagination.dto';
 import { UsersService } from 'src/users/users.service';
 import { formatResponse } from 'src/common/helper';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class PostsService {
@@ -16,8 +17,11 @@ export class PostsService {
 
     async create(createPostDto: CreatePostDto, files: { images?: Express.Multer.File[]; videos?: Express.Multer.File[];}) {
         await this.userService.findOne(createPostDto.userId);
+        const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+        const postId = crypto.createHash('md5').update(String(randomNumber)).digest('hex');
         const postInstance = new this.postModel({ 
             ...createPostDto, 
+            postId,
             images: files?.images?.map((file) => file.filename) || [],
             videos: files?.videos?.map((file) => file.filename) || [],
         });
@@ -31,7 +35,7 @@ export class PostsService {
         const search = pagination?.search;
         const skip = (page - 1) * limit;
         const filter = search ? {text: { $regex: search, $options: "i"}} : {}
-        const posts = await this.postModel.find(filter).skip(skip).limit(limit).select("-__v").exec();
+        const posts = await this.postModel.find(filter).skip(skip).limit(limit).select("-__v").sort({createdAt: -1}).exec();
         const total = await this.postModel.countDocuments(filter).exec()
         return formatResponse('Post list.', {
             posts,

@@ -6,6 +6,9 @@ export type PostDocument = Post & Document
 @Schema({timestamps: true})
 export class Post {
     @Prop()
+    postId: string;
+
+    @Prop()
     userId: string;
 
     @Prop()
