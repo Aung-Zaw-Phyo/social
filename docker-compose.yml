@@ -1,0 +1,40 @@
+services:
+  nestjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+      - mysql
+
+  mongodb:
+    build:
+      context: ./mongodb
+      dockerfile: mongodb.dockerfile
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+  mysql:
+    image: mysql:8.0
+    container_name: nestjs-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb-data:
+  mysql-data:
