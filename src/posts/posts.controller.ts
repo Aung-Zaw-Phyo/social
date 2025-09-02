@@ -37,8 +37,8 @@ export class PostsController {
         return this.postsService.create(createPostDto, files);
     }
 
-    @Get()
-    findAll(@Query() pagination: PaginationDto) {
+    @Post('/list')
+    findAll(@Body() pagination: PaginationDto) {
         return this.postsService.findAll(pagination);
     }
 

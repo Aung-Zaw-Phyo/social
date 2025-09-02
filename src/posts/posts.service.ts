@@ -26,9 +26,9 @@ export class PostsService {
     }
 
     async findAll(pagination: PaginationDto) {
-        const page = pagination.page || 1;
-        const limit = pagination.limit || 10;
-        const search = pagination.search;
+        const page = pagination?.page || 1;
+        const limit = pagination?.limit || 10;
+        const search = pagination?.search;
         const skip = (page - 1) * limit;
         const filter = search ? {text: { $regex: search, $options: "i"}} : {}
         const posts = await this.postModel.find(filter).skip(skip).limit(limit).select("-__v").exec();
