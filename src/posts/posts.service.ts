@@ -46,7 +46,7 @@ export class PostsService {
     }
 
     async findOne(id: string) {
-        const post = await this.postModel.findOne({_id: id}).exec();
+        const post = await this.postModel.findOne({postId: id}).exec();
         if(!post) {
             throw new HttpException({
                 message: "Post not found", error: "Not Found", statusCode: HttpStatus.NOT_FOUND}, 
